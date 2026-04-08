@@ -1,3 +1,7 @@
+"""
+Módulo Accounts: Modelos
+Define la estructura de datos para los perfiles y usuarios del sistema.
+"""
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 

@@ -1,3 +1,9 @@
+<!-- 
+  Módulo Components: AppLayout
+  Componente principal de diseño que enmarca toda la aplicación.
+  Incluye el Sidebar (navegación lateral), el Header (barra superior con clima, saludo dinámico y notificaciones)
+  y proporciona el espacio <router-view> para el contenido de la página.
+-->
 <template>
   <div class="flex min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
 

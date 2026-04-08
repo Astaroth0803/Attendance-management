@@ -1,3 +1,8 @@
+"""
+Módulo Core: Modelos
+Provee las entidades base o maestras del sistema, como Beneficiary (Beneficiarios),
+Activity (Actividades globales) y Event (Eventos específicos de una actividad).
+"""
 from django.db import models
 
 class Beneficiary(models.Model):

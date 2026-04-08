@@ -1,3 +1,8 @@
+"""
+Módulo Attendance: Modelos
+Contiene los modelos relacionados con el registro de asistencia a eventos
+y el control de inscripciones a excursiones de los beneficiarios.
+"""
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
