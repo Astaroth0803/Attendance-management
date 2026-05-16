@@ -4,14 +4,16 @@ Provee las entidades base o maestras del sistema, como Beneficiary (Beneficiario
 Activity (Actividades globales) y Event (Eventos específicos de una actividad).
 """
 from django.db import models
+from organizations.models import TenantModel
+from organizations.managers import TenantManager
 
-class Beneficiary(models.Model):
+class Beneficiary(TenantModel):
     class Sex(models.TextChoices):
         MALE = 'M', 'Masculino'
         FEMALE = 'F', 'Femenino'
         OTHER = 'O', 'Otro'
 
-    ci = models.CharField("Cédula o ID Local", max_length=50, unique=True, blank=True, null=True, help_text="Cédula de identidad o número de gafete QR")
+    ci = models.CharField("Cédula o ID Local", max_length=50, blank=True, null=True, help_text="Cédula de identidad o número de gafete QR")
     first_name = models.CharField("Nombre", max_length=100)
     last_name = models.CharField("Apellido", max_length=100)
     dob = models.DateField("Fecha de Nacimiento", help_text="Para calcular la edad automáticamente")
@@ -21,10 +23,21 @@ class Beneficiary(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    objects = TenantManager()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['organization', 'ci'],
+                name='unique_ci_per_org',
+                condition=models.Q(ci__isnull=False),
+            )
+        ]
+
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.ci})"
 
-class Activity(models.Model):
+class Activity(TenantModel):
     class Category(models.TextChoices):
         PERMANENT = 'PERMANENT', 'Permanente'
         EVENTUAL = 'EVENTUAL', 'Eventual'
@@ -36,14 +49,18 @@ class Activity(models.Model):
     is_active = models.BooleanField(default=True)
     image = models.TextField("Imagen (base64)", blank=True, null=True)
 
+    objects = TenantManager()
+
     def __str__(self):
         return self.name
 
-class Event(models.Model):
+class Event(TenantModel):
     activity = models.ForeignKey(Activity, on_delete=models.CASCADE, related_name="events")
     name = models.CharField("Nombre del Evento", max_length=150, help_text="Ej: -default- o 'Torneo de Fútbol'")
     date = models.DateField("Fecha del Evento", blank=True, null=True)
     is_active = models.BooleanField(default=True)
+
+    objects = TenantManager()
 
     def __str__(self):
         return f"{self.activity.name} - {self.name}"

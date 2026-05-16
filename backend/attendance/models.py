@@ -7,8 +7,10 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 from core.models import Beneficiary, Event
+from organizations.models import TenantModel
+from organizations.managers import TenantManager
 
-class AttendanceRecord(models.Model):
+class AttendanceRecord(TenantModel):
     beneficiary = models.ForeignKey(Beneficiary, on_delete=models.CASCADE, related_name="attendances")
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="attendances")
     date = models.DateField("Fecha de Asistencia")
@@ -22,6 +24,8 @@ class AttendanceRecord(models.Model):
             self.time = now_local.time()
         super().save(*args, **kwargs)
 
+    objects = TenantManager()
+
     class Meta:
         unique_together = ('beneficiary', 'event', 'date')
         indexes = [
@@ -32,7 +36,7 @@ class AttendanceRecord(models.Model):
     def __str__(self):
         return f"{self.beneficiary} -> {self.event} ({self.date})"
 
-class Excursion(models.Model):
+class Excursion(TenantModel):
     class Estado(models.TextChoices):
         PENDIENTE_REGISTRO = 'pendiente_registro', 'Pendiente de Registro'
         REGISTRO_CERRADO = 'registro_cerrado', 'Registro Cerrado'
@@ -55,6 +59,8 @@ class Excursion(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    objects = TenantManager()
+
     class Meta:
         indexes = [
             models.Index(fields=['fecha_evento'], name='idx_excursion_fecha'),
@@ -65,11 +71,13 @@ class Excursion(models.Model):
         return f"{self.nombre} ({self.fecha_evento}) - {self.get_estado_display()}"
 
 
-class RegistroExcursion(models.Model):
+class RegistroExcursion(TenantModel):
     excursion = models.ForeignKey(Excursion, on_delete=models.CASCADE, related_name="registros")
     usuario = models.ForeignKey(Beneficiary, on_delete=models.CASCADE, related_name="excursiones_registradas")
     asistio = models.BooleanField("Asistió", null=True, blank=True)
     fecha_registro = models.DateTimeField(auto_now_add=True)
+
+    objects = TenantManager()
 
     class Meta:
         unique_together = ('excursion', 'usuario')

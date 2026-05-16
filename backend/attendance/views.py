@@ -10,19 +10,24 @@ from core.models import Beneficiary
 from .models import AttendanceRecord, Excursion, RegistroExcursion
 from .serializers import AttendanceRecordSerializer, ExcursionSerializer, RegistroExcursionSerializer
 from .services import add_participant, change_state, mark_attendance
+from organizations.security import TenantViewMixin
 
-class AttendanceRecordViewSet(viewsets.ModelViewSet):
+class AttendanceRecordViewSet(TenantViewMixin, viewsets.ModelViewSet):
     queryset = AttendanceRecord.objects.all().select_related('beneficiary', 'event')
     serializer_class = AttendanceRecordSerializer
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
+        # We must call super().perform_create to get the organization injected by TenantViewMixin
+        # but TenantViewMixin does serializer.save(organization=org).
+        # We need to save with recorded_by too. Let's merge kwargs.
+        org = getattr(self.request, 'organization', None)
         try:
-            serializer.save(recorded_by=self.request.user)
+            serializer.save(organization=org, recorded_by=self.request.user)
         except IntegrityError:
             raise ValidationError({'detail': 'El usuario ya tiene asistencia registrada para este evento hoy.'})
 
-class PublicAttendanceViewSet(viewsets.ModelViewSet):
+class PublicAttendanceViewSet(TenantViewMixin, viewsets.ModelViewSet):
     """ Allows anyone to register attendance on the public form """
     queryset = AttendanceRecord.objects.all()
     serializer_class = AttendanceRecordSerializer
@@ -31,11 +36,11 @@ class PublicAttendanceViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         try:
-            serializer.save()
+            super().perform_create(serializer)
         except IntegrityError:
             raise ValidationError({'detail': 'Ya has registrado tu asistencia para este evento hoy.'})
 
-class ExcursionViewSet(viewsets.ModelViewSet):
+class ExcursionViewSet(TenantViewMixin, viewsets.ModelViewSet):
     queryset = Excursion.objects.prefetch_related('registros__usuario').all().order_by('-created_at')
     serializer_class = ExcursionSerializer
     permission_classes = [IsAuthenticated]

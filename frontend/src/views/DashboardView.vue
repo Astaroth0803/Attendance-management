@@ -1,99 +1,145 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-
-    <!-- Main Content -->
+  <div class="min-h-screen bg-background transition-colors duration-200">
     <div class="max-w-[1400px] mx-auto p-6 md:p-8 space-y-8">
 
       <!-- Loading State -->
-      <div v-if="loading" class="text-center p-12 text-gray-500 dark:text-gray-400">
+      <div v-if="loading" class="text-center p-12 text-muted-foreground">
           Cargando estadísticas...
       </div>
 
       <template v-else>
           <!-- Stats Grid -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm flex items-center justify-between border-l-4 border-orange-500 transition-colors">
-                <div>
-                    <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Asistencias Hoy</p>
-                    <p class="text-3xl font-bold text-gray-900 dark:text-gray-100"><AnimatedCounter :value="stats.attendances_today" /></p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6"
+               v-motion
+               :initial="{ opacity: 0, y: 20 }"
+               :enter="{ opacity: 1, y: 0, transition: { duration: 500 } }">
+
+            <!-- Card 1: Asistencias Hoy -->
+            <Card class="hover:shadow-md transition-shadow">
+              <CardContent class="flex items-center gap-4 p-6 relative overflow-hidden">
+                <div class="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center shrink-0 z-10">
+                  <UserGroupIcon class="h-6 w-6" />
                 </div>
-                <div class="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-full flex items-center justify-center text-xl">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                <div class="flex-1 min-w-0 z-10">
+                  <p class="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Asistencias Hoy</p>
+                  <div class="flex items-end gap-3 mt-0.5">
+                      <p class="text-3xl font-extrabold text-foreground"><AnimatedCounter :value="stats.attendances_today" /></p>
+                      <Badge v-if="stats.attendances_trend !== undefined" :variant="stats.attendances_trend >= 0 ? 'default' : 'destructive'" class="mb-1 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 shadow-none border-0" :class="{'bg-red-500/10 text-red-600 hover:bg-red-500/20': stats.attendances_trend < 0}">
+                          <ArrowTrendingUpIcon v-if="stats.attendances_trend >= 0" class="w-3 h-3 mr-1 stroke-2" />
+                          <ArrowTrendingDownIcon v-else class="w-3 h-3 mr-1 stroke-2" />
+                          {{ Math.abs(stats.attendances_trend) }}%
+                      </Badge>
+                  </div>
                 </div>
-            </div>
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm flex items-center justify-between border-l-4 border-blue-500 transition-colors">
-                <div>
-                    <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Usuarios Activos</p>
-                    <p class="text-3xl font-bold text-gray-900 dark:text-gray-100"><AnimatedCounter :value="stats.active_users" /></p>
+              </CardContent>
+            </Card>
+
+            <!-- Card 2: Usuarios Activos -->
+            <Card class="hover:shadow-md transition-shadow">
+              <CardContent class="flex items-center gap-4 p-6 relative overflow-hidden">
+                <div class="w-12 h-12 bg-chart-2/10 text-chart-2 rounded-xl flex items-center justify-center shrink-0 z-10">
+                  <UserPlusIcon class="h-6 w-6" />
                 </div>
-                <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center text-xl">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <div class="flex-1 min-w-0 z-10">
+                  <p class="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Usuarios Activos (Mes)</p>
+                  <div class="flex items-end gap-3 mt-0.5">
+                      <p class="text-3xl font-extrabold text-foreground"><AnimatedCounter :value="stats.active_users" /></p>
+                      <Badge v-if="stats.users_trend !== undefined" :variant="stats.users_trend >= 0 ? 'default' : 'destructive'" class="mb-1 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 shadow-none border-0" :class="{'bg-red-500/10 text-red-600 hover:bg-red-500/20': stats.users_trend < 0}">
+                          <ArrowTrendingUpIcon v-if="stats.users_trend >= 0" class="w-3 h-3 mr-1 stroke-2" />
+                          <ArrowTrendingDownIcon v-else class="w-3 h-3 mr-1 stroke-2" />
+                          {{ Math.abs(stats.users_trend) }}%
+                      </Badge>
+                  </div>
                 </div>
-            </div>
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm flex items-center justify-between border-l-4 border-green-500 transition-colors">
-                <div>
-                    <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Actividad Principal</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ stats.top_activity_name }}</p>
+              </CardContent>
+            </Card>
+
+            <!-- Card 3: Actividad Principal -->
+            <Card class="hover:shadow-md transition-shadow">
+              <CardContent class="flex items-center gap-4 p-6">
+                <div class="w-12 h-12 bg-violet-500/10 text-violet-500 rounded-xl flex items-center justify-center shrink-0">
+                  <PuzzlePieceIcon class="h-6 w-6" />
                 </div>
-                <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center text-xl">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" /></svg>
+                <div class="flex-1 min-w-0">
+                  <p class="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Actividad Principal</p>
+                  <p class="text-2xl font-extrabold text-foreground mt-0.5">{{ stats.top_activity_name }}</p>
                 </div>
-            </div>
+              </CardContent>
+            </Card>
+
           </div>
 
           <!-- Bottom Section: Chart and Top Users -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6"
+               v-motion
+               :initial="{ opacity: 0, y: 30 }"
+               :enter="{ opacity: 1, y: 0, transition: { duration: 600, delay: 200 } }">
             
             <!-- Charts Area -->
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm flex-1 transition-colors">
-              <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Asistencia Anual</h3>
-              <transition name="fade-slide" appear>
-                <div v-show="!loading">
-                  <apexchart type="area" height="320" :options="chartOptions" :series="chartSeries"></apexchart>
-                </div>
-              </transition>
-            </div>
+            <Card>
+              <CardHeader class="pb-2">
+                <CardTitle class="text-xl font-extrabold">Asistencia Anual</CardTitle>
+                <p class="text-sm text-muted-foreground mt-0.5">Tendencia mensual de asistencias registradas</p>
+              </CardHeader>
+              <CardContent class="pt-2">
+                <apexchart type="bar" height="340" :options="chartOptions" :series="chartSeries"></apexchart>
+              </CardContent>
+            </Card>
 
-            <!-- Top 5 Attendees Table -->
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm flex-1 transition-colors">
-              <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Top 5 Usuarios Destacados</h3>
-              <transition name="fade-slide" appear>
-              <div v-show="!loading" class="overflow-x-auto rounded-lg border border-gray-100 dark:border-gray-700">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                  <thead class="bg-gray-50 dark:bg-gray-700/50">
-                    <tr>
-                      <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nombre</th>
-                      <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Cédula</th>
-                      <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Asistencias</th>
-                    </tr>
-                  </thead>
-                  <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                    <tr v-for="(user, index) in stats.top_attendees" :key="user.id" class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                      <td class="px-4 py-4 whitespace-nowrap">
-                        <div class="flex items-center">
-                          <span class="w-6 h-6 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-600 text-gray-500 dark:text-gray-300 font-bold text-xs mr-3">
-                              {{ index + 1 }}
-                          </span>
-                          <span class="font-medium text-gray-900 dark:text-gray-100">{{ user.name }}</span>
-                        </div>
-                      </td>
-                      <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ user.ci }}</td>
-                      <td class="px-4 py-4 whitespace-nowrap text-center">
-                        <span class="px-2.5 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300 text-xs font-bold rounded-full">
-                          {{ user.attendance_count }}
-                        </span>
-                      </td>
-                    </tr>
-                    <tr v-if="!stats.top_attendees || stats.top_attendees.length === 0">
-                      <td colspan="3" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400 text-sm">
-                        Aún no hay suficientes asistencias registradas.
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              </transition>
-            </div>
+            <!-- Top 5 Attendees Leaderboard -->
+            <Card class="border-amber-200/50 dark:border-amber-500/20 shadow-amber-500/5 overflow-hidden relative">
+              <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600"></div>
+              <CardHeader class="pb-2">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <CardTitle class="text-xl font-extrabold flex items-center gap-2">
+                            <TrophySolidIcon class="w-6 h-6 text-amber-500" /> Leaderboard Mensual
+                        </CardTitle>
+                        <p class="text-sm text-muted-foreground mt-0.5">Podio de los mayores asistentes del mes en curso</p>
+                    </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div class="overflow-x-auto">
+                  <table class="min-w-full divide-y divide-border">
+                    <tbody class="divide-y divide-border">
+                      <tr v-for="(user) in leaderboard" :key="user.id" class="hover:bg-muted/30 transition-colors group">
+                        <td class="pr-2 py-4 whitespace-nowrap w-12 text-center font-bold">
+                            <div v-if="user.rank === 1" class="flex justify-center" title="1er Lugar">
+                                <TrophySolidIcon class="w-7 h-7 text-yellow-500 drop-shadow-md" />
+                            </div>
+                            <div v-else-if="user.rank === 2" class="flex justify-center" title="2do Lugar">
+                                <StarSolidIcon class="w-7 h-7 text-slate-400 drop-shadow" />
+                            </div>
+                            <div v-else-if="user.rank === 3" class="flex justify-center" title="3er Lugar">
+                                <StarSolidIcon class="w-7 h-7 text-amber-700 drop-shadow" />
+                            </div>
+                            <span v-else class="text-muted-foreground">{{ user.rank }}</span>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap">
+                          <div class="flex items-center">
+                            <span class="font-bold text-foreground text-base">{{ user.name }}</span>
+                          </div>
+                        </td>
+                        <td class="px-4 py-4 whitespace-nowrap text-right">
+                          <Badge variant="secondary" class="font-extrabold group-hover:bg-primary group-hover:text-primary-foreground transition-colors px-3">
+                              {{ user.attendances }} asistencias
+                          </Badge>
+                        </td>
+                      </tr>
+                      <tr v-if="loadingLeaderboard">
+                         <td colspan="3" class="px-4 py-12 text-center text-muted-foreground text-sm">Cargando podio...</td>
+                      </tr>
+                      <tr v-if="!loadingLeaderboard && leaderboard.length === 0">
+                        <td colspan="3" class="px-4 py-12 text-center text-muted-foreground text-sm">
+                          Aún no hay asistencias suficientes este mes.
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
 
           </div>
       </template>
@@ -106,49 +152,61 @@
 import { ref, onMounted } from 'vue'
 import apiClient from '../plugins/axios'
 import AnimatedCounter from '../components/AnimatedCounter.vue'
+import { UserGroupIcon, UserPlusIcon, PuzzlePieceIcon, ArrowTrendingUpIcon, ArrowTrendingDownIcon } from '@heroicons/vue/24/outline'
+import { TrophyIcon as TrophySolidIcon, StarIcon as StarSolidIcon } from '@heroicons/vue/24/solid'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 
 const loading = ref(true)
+const loadingLeaderboard = ref(true)
+const leaderboard = ref([])
 const stats = ref({
     attendances_today: 0,
+    attendances_trend: 0,
     active_users: 0,
+    users_trend: 0,
     top_activity_name: 'N/A',
-    chart_data: [],
-    top_attendees: []
+    chart_data: []
 })
 
 const chartOptions = ref({
-    chart: { type: 'area', toolbar: { show: false } },
-    colors: ['#ea580c', '#6366f1', '#eab308'], // Naranja, Indigo, Amarillo
-    stroke: { curve: 'smooth', width: 3 },
-    markers: { size: 4 },
+    chart: { type: 'bar', toolbar: { show: false }, background: 'transparent', fontFamily: 'Inter, sans-serif' },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: '55%',
+        borderRadius: 4
+      },
+    },
+    colors: ['#ea580c', '#6366f1', '#eab308'],
+    stroke: { show: true, width: 2, colors: ['transparent'] },
     dataLabels: { enabled: false },
     xaxis: {
-      categories: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+      categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
       labels: {
         style: {
-          colors: Array(12).fill('#9ca3af'), // gray-400 - light enough for dark mode
-          fontSize: '11px',
-        }
-      }
+          colors: Array(12).fill('#9ca3af'),
+          fontSize: '12px',
+          fontWeight: 600,
+        },
+        rotate: 0,
+      },
+      axisBorder: { show: false },
+      axisTicks: { show: false },
     },
     yaxis: {
       labels: {
-        style: {
-          colors: ['#9ca3af'], // gray-400
-        }
+        style: { colors: ['#9ca3af'], fontSize: '12px' },
+        formatter: val => Math.round(val),
       }
     },
-    grid: { borderColor: '#374151' }, // gray-700 - works in dark
-    tooltip: { y: { formatter: val => `${val} asistencias` } },
-    fill: {
-        type: 'gradient',
-        gradient: {
-            shadeIntensity: 1,
-            opacityFrom: 0.4,
-            opacityTo: 0.05,
-            stops: [0, 90, 100]
-        }
-    }
+    grid: { borderColor: '#e5e7eb', strokeDashArray: 4 },
+    tooltip: {
+      theme: 'light',
+      y: { formatter: val => `${val} asistencias` },
+      style: { fontSize: '13px' },
+    },
+    fill: { opacity: 1 }
 })
 
 const chartSeries = ref([{ name: 'Asistencias', data: [] }])
@@ -167,19 +225,19 @@ const fetchStats = async () => {
     }
 }
 
+const fetchLeaderboard = async () => {
+    try {
+        const res = await apiClient.get('dashboard/leaderboard/')
+        leaderboard.value = res.data
+    } catch (e) {
+        console.error("Error fetching leaderboard:", e)
+    } finally {
+        loadingLeaderboard.value = false
+    }
+}
+
 onMounted(() => {
     fetchStats()
+    fetchLeaderboard()
 })
 </script>
-
-<style scoped>
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.fade-slide-enter-from,
-.fade-slide-leave-to {
-  opacity: 0;
-  transform: translateY(20px);
-}
-</style>

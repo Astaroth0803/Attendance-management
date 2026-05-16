@@ -1,336 +1,317 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-
-    <!-- Main Content -->
+  <div class="min-h-screen bg-background transition-colors duration-200">
     <div class="max-w-[1400px] mx-auto p-6 md:p-8 flex flex-col md:flex-row gap-8">
       
-      <!-- STEP 1: Select Report Type (Cards Grid) -->
+      <!-- STEP 1: Select Report Type -->
       <div v-if="!selectedReport" class="w-full">
-        <h1 class="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mb-2">Centro de Reportes</h1>
-        <p class="text-gray-500 dark:text-gray-400 mb-8 text-lg">Selecciona el tipo de informe que deseas generar y exportar.</p>
+        <h1 class="text-3xl font-extrabold text-foreground mb-2">Centro de Reportes</h1>
+        <p class="text-muted-foreground mb-8 text-lg">Selecciona el tipo de informe que deseas generar y exportar.</p>
         
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <!-- Asistencias por Día -->
-          <button @click="selectedReport = 'attendance'" class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md hover:border-orange-200 dark:hover:border-orange-900/50 transition-all text-left group flex flex-col h-full hover:-translate-y-1 duration-200">
-            <div class="w-14 h-14 bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <svg fill="currentColor" viewBox="0 0 20 20" class="w-7 h-7"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card @click="selectedReport = 'attendance'" class="p-6 cursor-pointer hover:shadow-md hover:border-primary/30 transition-all text-left group flex flex-col h-full hover:-translate-y-1 duration-200">
+            <div class="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <Star class="w-6 h-6" />
             </div>
-            <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">Asistencias por Día</h3>
-            <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">Genera un listado cronológico de las personas que ingresaron a una fecha y hora determinada.</p>
-          </button>
+            <h3 class="text-lg font-bold text-foreground mb-1">Asistencias por Día</h3>
+            <p class="text-muted-foreground text-sm leading-relaxed">Listado cronológico de ingresos a fecha y hora determinada.</p>
+          </Card>
 
-          <!-- Actividades más visitadas -->
-          <button @click="selectedReport = 'activities'" class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md hover:border-orange-200 dark:hover:border-orange-900/50 transition-all text-left group flex flex-col h-full hover:-translate-y-1 duration-200">
-            <div class="w-14 h-14 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-7"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>
+          <Card @click="selectedReport = 'activities'" class="p-6 cursor-pointer hover:shadow-md hover:border-primary/30 transition-all text-left group flex flex-col h-full hover:-translate-y-1 duration-200">
+            <div class="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/20 text-emerald-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <BarChart3 class="w-6 h-6" />
             </div>
-            <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">Actividades más visitadas</h3>
-            <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">Conoce cuáles son las actividades (ej: Karate, Tareas) con más asistencias únicas en el rango seleccionado.</p>
-          </button>
+            <h3 class="text-lg font-bold text-foreground mb-1">Actividades más visitadas</h3>
+            <p class="text-muted-foreground text-sm leading-relaxed">Actividades con más asistencias únicas en un rango.</p>
+          </Card>
 
-          <!-- Por Evento -->
-          <button @click="selectedReport = 'events'" class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md hover:border-orange-200 dark:hover:border-orange-900/50 transition-all text-left group flex flex-col h-full hover:-translate-y-1 duration-200">
-            <div class="w-14 h-14 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-7"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" /></svg>
+          <Card @click="selectedReport = 'events'" class="p-6 cursor-pointer hover:shadow-md hover:border-primary/30 transition-all text-left group flex flex-col h-full hover:-translate-y-1 duration-200">
+            <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 text-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <CalendarRange class="w-6 h-6" />
             </div>
-            <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">Por Evento</h3>
-            <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">Resumen de cuántas personas únicas asistieron a los eventos específicos de una actividad (ej: Torneos).</p>
-          </button>
+            <h3 class="text-lg font-bold text-foreground mb-1">Por Evento</h3>
+            <p class="text-muted-foreground text-sm leading-relaxed">Cuántas personas únicas asistieron a los eventos específicos.</p>
+          </Card>
+
+          <Card @click="selectedReport = 'risk'; fetchRiskReport()" class="p-6 cursor-pointer hover:shadow-md hover:border-destructive/50 transition-all text-left group flex flex-col h-full hover:-translate-y-1 duration-200 border-destructive/20 bg-destructive/5">
+            <div class="w-12 h-12 bg-destructive/10 text-destructive rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform group-hover:bg-destructive group-hover:text-white">
+              <AlertTriangle class="w-6 h-6" />
+            </div>
+            <h3 class="text-lg font-bold text-destructive mb-1">Riesgo de Abandono</h3>
+            <p class="text-muted-foreground text-sm leading-relaxed">Identifica a los usuarios que dejaron de asistir recientemente para seguimiento.</p>
+          </Card>
         </div>
       </div>
       
-      <!-- STEP 2: Report View (Filters & Table) -->
-      <div v-else class="flex-1 space-y-6 w-full animate-fade-in-up">
-        
-        <div class="mb-4">
-          <button @click="selectedReport = null; hasSearched = false" class="text-orange-600 dark:text-orange-400 hover:text-orange-800 dark:hover:text-orange-300 flex items-center gap-1 font-medium mb-4 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Volver a opciones
-          </button>
-        </div>
+      <!-- STEP 2: Report View -->
+      <div v-else class="flex-1 space-y-6 w-full">
+        <Button variant="ghost" @click="selectedReport = null; hasSearched = false" class="text-primary -ml-2 mb-4">
+          <ArrowLeft class="h-5 w-5 mr-1" /> Volver a opciones
+        </Button>
 
         <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
             <div>
-                <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 tracking-tight">
-                    {{ selectedReport === 'attendance' ? 'Reporte de Asistencia' : selectedReport === 'activities' ? 'Actividades con más asistencias' : selectedReport === 'events' ? 'Reporte por Evento' : 'Historial' }}
+                <h2 class="text-3xl font-bold text-foreground tracking-tight">
+                    {{ selectedReport === 'attendance' ? 'Reporte de Asistencia' : selectedReport === 'activities' ? 'Actividades con más asistencias' : selectedReport === 'events' ? 'Reporte por Evento' : 'Riesgo de Abandono (Churn)' }}
                 </h2>
-                <p class="text-gray-500 dark:text-gray-400 mt-2 text-lg">Filtra y exporta el historial.</p>
+                <p class="text-muted-foreground mt-2 text-lg">Filtra y exporta el historial.</p>
             </div>
-            
             <div class="flex gap-3 mt-4 md:mt-0 w-full md:w-auto">
-                <button @click="exportToPDF" :disabled="!currentRecords.length" class="flex-1 md:flex-none flex flex-row items-center justify-center gap-2 px-6 py-2.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/40 font-bold transition-colors disabled:opacity-50">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-5">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                    </svg>
-                    PDF
-                </button>
-                <button @click="exportToExcel" :disabled="!currentRecords.length" class="flex-1 md:flex-none flex flex-row items-center justify-center gap-2 px-6 py-2.5 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/40 font-bold transition-colors disabled:opacity-50">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-5">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                    </svg>
-                    Excel
-                </button>
+                <Button @click="exportToPDF" :disabled="!currentRecords.length" variant="outline" class="flex-1 md:flex-none text-destructive border-red-200 hover:bg-red-50">
+                    <FileText class="w-5 h-5 mr-2" /> PDF
+                </Button>
+                <Button @click="exportToExcel" :disabled="!currentRecords.length" variant="outline" class="flex-1 md:flex-none text-emerald-600 border-emerald-200 hover:bg-emerald-50">
+                    <FileSpreadsheet class="w-5 h-5 mr-2" /> Excel
+                </Button>
             </div>
         </div>
 
         <!-- Filters -->
-        <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 mb-6">
+        <Card class="p-8">
             <div class="flex flex-wrap items-end gap-6 mb-6">
                 <div class="flex-1 min-w-[160px]">
-                    <label class="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2">Fecha de Inicio</label>
-                    <input type="date" v-model="filters.start_date" class="block w-full border-0 border-b-2 border-gray-200 dark:border-gray-600 focus:ring-0 focus:border-orange-600 bg-transparent py-2 px-0 text-gray-900 dark:text-gray-100 transition-colors text-lg">
+                    <Label class="mb-2">Fecha de Inicio</Label>
+                    <Input type="date" v-model="filters.start_date" />
                 </div>
                 <div class="flex-1 min-w-[160px]">
-                    <label class="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2">Fecha Final</label>
-                    <input type="date" v-model="filters.end_date" class="block w-full border-0 border-b-2 border-gray-200 dark:border-gray-600 focus:ring-0 focus:border-orange-600 bg-transparent py-2 px-0 text-gray-900 dark:text-gray-100 transition-colors text-lg">
+                    <Label class="mb-2">Fecha Final</Label>
+                    <Input type="date" v-model="filters.end_date" />
                 </div>
                 <template v-if="selectedReport === 'attendance'">
                     <div class="flex-1 min-w-[130px]">
-                        <label class="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2">Hora de Inicio</label>
-                        <input type="time" v-model="filters.start_time" class="block w-full border-0 border-b-2 border-gray-200 dark:border-gray-600 focus:ring-0 focus:border-orange-600 bg-transparent py-2 px-0 text-gray-900 dark:text-gray-100 transition-colors text-lg">
+                        <Label class="mb-2">Hora de Inicio</Label>
+                        <Input type="time" v-model="filters.start_time" />
                     </div>
                     <div class="flex-1 min-w-[130px]">
-                        <label class="block text-sm font-bold text-gray-500 dark:text-gray-400 mb-2">Hora Final</label>
-                        <input type="time" v-model="filters.end_time" class="block w-full border-0 border-b-2 border-gray-200 dark:border-gray-600 focus:ring-0 focus:border-orange-600 bg-transparent py-2 px-0 text-gray-900 dark:text-gray-100 transition-colors text-lg">
+                        <Label class="mb-2">Hora Final</Label>
+                        <Input type="time" v-model="filters.end_time" />
                     </div>
                 </template>
-                <button @click="fetchReport" class="px-8 py-3 bg-orange-600 text-white font-bold rounded-lg shadow-md hover:bg-orange-700 transition-colors uppercase text-sm tracking-widest mt-4 md:mt-0 w-full md:w-auto">
+                <Button @click="fetchReport" class="uppercase text-sm tracking-widest mt-4 md:mt-0 w-full md:w-auto">
                     BUSCAR
-                </button>
+                </Button>
             </div>
 
             <!-- Quick Actions -->
             <div class="flex flex-wrap gap-4 mt-8 justify-start">
-                <button @click="setQuickFilter('hoy')" class="w-16 h-16 rounded-full bg-orange-600 text-white font-bold text-xs shadow-md hover:bg-orange-700 hover:-translate-y-1 flex items-center justify-center transition-all duration-200">
-                    Hoy
-                </button>
-                <button @click="setQuickFilter('ayer')" class="w-16 h-16 rounded-full bg-orange-600 text-white font-bold text-xs shadow-md hover:bg-orange-700 hover:-translate-y-1 flex items-center justify-center transition-all duration-200">
-                    Ayer
-                </button>
-                <button @click="setQuickFilter('semana')" class="w-16 h-16 rounded-full bg-orange-600 text-white font-bold text-xs shadow-md hover:bg-orange-700 hover:-translate-y-1 flex items-center justify-center transition-all duration-200">
-                    Semana
-                </button>
-                <button @click="setQuickFilter('semana_pasada')" class="w-16 h-16 rounded-full bg-orange-600 text-white font-bold text-xs text-center leading-tight shadow-md hover:bg-orange-700 hover:-translate-y-1 flex items-center justify-center transition-all duration-200">
-                    Semana<br>pasada
-                </button>
-                <button @click="setQuickFilter('mes')" class="w-16 h-16 rounded-full bg-orange-600 text-white font-bold text-xs shadow-md hover:bg-orange-700 hover:-translate-y-1 flex items-center justify-center transition-all duration-200">
-                    Mes
-                </button>
-                <button @click="setQuickFilter('mes_pasado')" class="w-16 h-16 rounded-full bg-orange-600 text-white font-bold text-xs text-center leading-tight shadow-md hover:bg-orange-700 hover:-translate-y-1 flex items-center justify-center transition-all duration-200">
-                    Mes<br>pasado
+                <button v-for="q in quickFilters" :key="q.key" @click="setQuickFilter(q.key)" class="w-16 h-16 rounded-full bg-primary text-primary-foreground font-bold text-xs shadow-md hover:bg-primary/90 hover:-translate-y-1 flex items-center justify-center transition-all duration-200 text-center leading-tight">
+                    <span v-html="q.label"></span>
                 </button>
             </div>
-        </div>
+        </Card>
 
         <!-- Tables area -->
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-
-          <!-- Prompt before first search -->
-          <div v-if="!hasSearched && !loading" class="flex flex-col items-center justify-center py-20 text-gray-400 gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-orange-200">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-            </svg>
-            <p class="text-sm font-medium">Selecciona un rango de fechas y presiona <strong class="text-orange-600">BUSCAR</strong></p>
+        <Card class="overflow-hidden">
+          <div v-if="!hasSearched && !loading" class="flex flex-col items-center justify-center py-20 text-muted-foreground gap-3">
+            <SearchIcon class="w-12 h-12 text-primary/20" />
+            <p class="text-sm font-medium">Selecciona un rango de fechas y presiona <strong class="text-primary">BUSCAR</strong></p>
           </div>
 
-          <!-- Loading -->
-          <div v-else-if="loading" class="flex items-center justify-center py-20 text-gray-400">
-            <svg class="animate-spin h-6 w-6 mr-2 text-orange-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-            </svg>
+          <div v-else-if="loading" class="flex items-center justify-center py-20 text-muted-foreground">
             Cargando datos...
           </div>
 
           <template v-else>
-            <transition name="fade-slide" mode="out-in" appear>
-              <div :key="selectedReport">
-              <!-- Table: Attendance History -->
-            <table v-if="selectedReport === 'attendance'" class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead class="bg-gray-50 dark:bg-gray-700/50">
+            <!-- Table: Attendance History -->
+            <table v-if="selectedReport === 'attendance'" class="min-w-full divide-y divide-border">
+                <thead class="bg-muted/50">
                     <tr>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Fecha</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Hora</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Usuario</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Cédula</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actividad</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Evento / Detalles</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Fecha</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Hora</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Usuario</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Cédula</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Actividad</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Evento / Detalles</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                    <tr v-for="record in attendanceRecords" :key="record.id" class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 dark:text-gray-100">{{ record.date }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-mono">{{ record.time }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-base text-gray-900 dark:text-gray-100">{{ record.beneficiary_name }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ record.beneficiary_ci }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">{{ record.activity_name }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ record.event_name }}</td>
+                <tbody class="divide-y divide-border">
+                    <tr v-for="record in attendanceRecords" :key="record.id" class="hover:bg-muted/30 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-foreground">{{ record.date }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground font-mono">{{ record.time }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-base text-foreground">{{ record.beneficiary_name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{{ record.beneficiary_ci }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-foreground">{{ record.activity_name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{{ record.event_name }}</td>
                     </tr>
                     <tr v-if="attendanceRecords.length === 0">
-                        <td colspan="6" class="px-6 py-12 text-center text-gray-400 dark:text-gray-500 text-lg">Sin resultados para el rango seleccionado.</td>
+                        <td colspan="6" class="px-6 py-12 text-center text-muted-foreground text-lg">Sin resultados para el rango seleccionado.</td>
                     </tr>
                 </tbody>
             </table>
 
             <!-- Table: Top Activities -->
-            <table v-if="selectedReport === 'activities'" class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead class="bg-gray-50 dark:bg-gray-700/50">
+            <table v-if="selectedReport === 'activities'" class="min-w-full divide-y divide-border">
+                <thead class="bg-muted/50">
                     <tr>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actividad</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Evento / Detalles</th>
-                        <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nº de Asistentes Únicos</th>
-                        <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider w-16">Detalle</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Actividad</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Evento / Detalles</th>
+                        <th class="px-6 py-4 text-center text-xs font-bold text-muted-foreground uppercase tracking-wider">Nº de Asistentes Únicos</th>
+                        <th class="px-6 py-4 text-center text-xs font-bold text-muted-foreground uppercase tracking-wider w-16">Detalle</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                    <tr v-for="(record, idx) in activityRecords" :key="idx" class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 dark:text-gray-100">{{ record.activity_name }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">{{ record.event_name }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-center text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/20">{{ record.attendees }}</td>
+                <tbody class="divide-y divide-border">
+                    <tr v-for="(record, idx) in activityRecords" :key="idx" class="hover:bg-muted/30 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-foreground">{{ record.activity_name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-foreground">{{ record.event_name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-center text-primary bg-primary/5">{{ record.attendees }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <button
-                              @click="openAttendeesModal(record)"
-                              class="w-8 h-8 rounded-full bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 hover:bg-orange-600 hover:text-white dark:hover:bg-orange-600 dark:hover:text-white transition-all flex items-center justify-center mx-auto font-bold text-lg shadow-sm"
-                              title="Ver asistentes"
-                            >+</button>
+                            <Button @click="openAttendeesModal(record)" variant="ghost" size="icon" class="h-8 w-8 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground">
+                              <Plus class="w-4 h-4" />
+                            </Button>
                         </td>
                     </tr>
                     <tr v-if="activityRecords.length === 0">
-                        <td colspan="4" class="px-6 py-12 text-center text-gray-400 dark:text-gray-500 text-lg">Sin resultados para el rango seleccionado.</td>
+                        <td colspan="4" class="px-6 py-12 text-center text-muted-foreground text-lg">Sin resultados para el rango seleccionado.</td>
                     </tr>
                 </tbody>
             </table>
 
             <!-- Table: Por Evento -->
-            <table v-if="selectedReport === 'events'" class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead class="bg-gray-50 dark:bg-gray-700/50">
+            <table v-if="selectedReport === 'events'" class="min-w-full divide-y divide-border">
+                <thead class="bg-muted/50">
                     <tr>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Evento</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actividad</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Fecha Evento</th>
-                        <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Asistentes Únicos</th>
-                        <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider w-16">Detalle</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Evento</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Actividad</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Fecha Evento</th>
+                        <th class="px-6 py-4 text-center text-xs font-bold text-muted-foreground uppercase tracking-wider">Asistentes Únicos</th>
+                        <th class="px-6 py-4 text-center text-xs font-bold text-muted-foreground uppercase tracking-wider w-16">Detalle</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                    <tr v-for="(record, idx) in eventRecords" :key="idx" class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 dark:text-gray-100">{{ record.event_name }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">{{ record.activity_name }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ record.event_date }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-center text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/20">{{ record.attendees }}</td>
+                <tbody class="divide-y divide-border">
+                    <tr v-for="(record, idx) in eventRecords" :key="idx" class="hover:bg-muted/30 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-foreground">{{ record.event_name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-foreground">{{ record.activity_name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{{ record.event_date }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-center text-primary bg-primary/5">{{ record.attendees }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <button
-                              @click="openAttendeesModal(record)"
-                              class="w-8 h-8 rounded-full bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 hover:bg-orange-600 hover:text-white dark:hover:bg-orange-600 dark:hover:text-white transition-all flex items-center justify-center mx-auto font-bold text-lg shadow-sm"
-                              title="Ver asistentes"
-                            >+</button>
+                            <Button @click="openAttendeesModal(record)" variant="ghost" size="icon" class="h-8 w-8 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground">
+                              <Plus class="w-4 h-4" />
+                            </Button>
                         </td>
                     </tr>
                     <tr v-if="eventRecords.length === 0">
-                        <td colspan="5" class="px-6 py-12 text-center text-gray-400 dark:text-gray-500 text-lg">Sin resultados para el rango seleccionado.</td>
+                        <td colspan="5" class="px-6 py-12 text-center text-muted-foreground text-lg">Sin resultados para el rango seleccionado.</td>
                     </tr>
                 </tbody>
             </table>
-              </div>
-            </transition>
+            <!-- Table: Riesgo Abandono -->
+            <table v-if="selectedReport === 'risk'" class="min-w-full divide-y divide-border">
+                <thead class="bg-muted/50">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Nombre</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Cédula</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Teléfono / Sector</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Última Asistencia</th>
+                        <th class="px-6 py-4 text-center text-xs font-bold text-muted-foreground uppercase tracking-wider">Días de Ausencia</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-border">
+                    <tr v-for="(record, idx) in riskRecords" :key="idx" class="hover:bg-muted/30 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-foreground">{{ record.name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-foreground">{{ record.ci }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{{ record.phone }} / {{ record.sector }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{{ record.last_attendance }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-center">
+                            <Badge variant="destructive" class="bg-destructive/10 text-destructive shadow-none">{{ record.days_since }} días</Badge>
+                        </td>
+                    </tr>
+                    <tr v-if="riskRecords.length === 0">
+                        <td colspan="5" class="px-6 py-12 text-center border-emerald-500/20 bg-emerald-500/5 transition-colors">
+                          <div class="flex flex-col items-center gap-2">
+                             <CheckCircle2 class="text-emerald-500 w-10 h-10" />
+                             <p class="text-emerald-700 dark:text-emerald-400 font-medium">No hay usuarios en riesgo de abandono actualmente. ¡Excelente retención!</p>
+                          </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
           </template>
-        </div>
-
+        </Card>
       </div>
     </div>
   </div>
 
   <!-- ===== Attendees Detail Modal ===== -->
-  <div v-if="showAttendeesModal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 flex items-center justify-center p-4" @click.self="showAttendeesModal = false">
-    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[85vh] flex flex-col overflow-hidden border border-gray-100 dark:border-gray-700">
-
-      <!-- Modal Header -->
-      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800">
-        <div>
-          <h2 class="text-lg font-extrabold text-gray-800 dark:text-gray-100">Asistentes: {{ modalRecord?.activity_name }}</h2>
-          <p class="text-sm text-gray-400 dark:text-gray-500 mt-0.5">{{ modalRecord?.event_name }} · {{ filters.start_date }} – {{ filters.end_date }}</p>
-        </div>
-        <button @click="showAttendeesModal = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
-      </div>
-
-      <!-- Export buttons -->
-      <div class="flex items-center gap-3 px-6 py-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
-        <button @click="exportAttendeesExcel" :disabled="!attendeesList.length" class="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-md hover:bg-green-100 dark:hover:bg-green-900/40 font-semibold text-sm transition-colors disabled:opacity-40">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
-          Excel
-        </button>
-        <button @click="exportAttendeesPDF" :disabled="!attendeesList.length" class="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-md hover:bg-red-100 dark:hover:bg-red-900/40 font-semibold text-sm transition-colors disabled:opacity-40">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
-          PDF
-        </button>
-        <span class="ml-auto text-sm font-medium text-gray-500 dark:text-gray-400">{{ attendeesList.length }} asistente{{ attendeesList.length !== 1 ? 's' : '' }}</span>
-      </div>
-
-      <!-- Table -->
-      <div class="overflow-y-auto flex-1 bg-white dark:bg-gray-800">
-        <div v-if="modalLoading" class="flex items-center justify-center py-16 text-gray-400 dark:text-gray-500">
-          <svg class="animate-spin h-6 w-6 mr-2 text-orange-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-          </svg>
-          Cargando...
-        </div>
-        <table v-else class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead class="bg-gray-50 dark:bg-gray-700/50 sticky top-0">
-            <tr>
-              <th class="px-5 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">#</th>
-              <th class="px-5 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Fecha</th>
-              <th class="px-5 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Hora</th>
-              <th class="px-5 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nombre</th>
-              <th class="px-5 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Cédula</th>
-              <th class="px-5 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Sector</th>
-              <th class="px-5 py-3 text-center text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Visitas</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
-            <tr v-for="(a, i) in attendeesList" :key="i" class="hover:bg-orange-50 dark:hover:bg-gray-700/50 transition-colors">
-              <td class="px-5 py-3 text-sm text-gray-400 dark:text-gray-500">{{ i + 1 }}</td>
-              <td class="px-5 py-3 text-sm font-bold text-gray-800 dark:text-gray-100">{{ a.ultima_asistencia }}</td>
-              <td class="px-5 py-3 text-sm font-bold text-orange-600 dark:text-orange-400">{{ a.ultima_hora || '—' }}</td>
-              <td class="px-5 py-3 text-sm text-gray-800 dark:text-gray-100">{{ a.nombre }}</td>
-              <td class="px-5 py-3 text-sm text-gray-500 dark:text-gray-400">{{ a.cedula }}</td>
-              <td class="px-5 py-3 text-sm text-gray-500 dark:text-gray-400">{{ a.sector }}</td>
-              <td class="px-5 py-3 text-sm text-center">
-                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-400 font-bold text-xs">{{ a.total_visitas }}</span>
-              </td>
-            </tr>
-            <tr v-if="!modalLoading && attendeesList.length === 0">
-              <td colspan="7" class="px-5 py-10 text-center text-gray-400 dark:text-gray-500 text-lg">No hay asistentes registrados en este período.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  <Dialog :open="showAttendeesModal" @update:open="showAttendeesModal = $event" class="max-w-3xl">
+    <DialogHeader>
+      <DialogTitle>Asistentes: {{ modalRecord?.activity_name }}</DialogTitle>
+      <p class="text-sm text-muted-foreground mt-0.5">{{ modalRecord?.event_name }} · {{ filters.start_date }} – {{ filters.end_date }}</p>
+    </DialogHeader>
+    <!-- Export buttons -->
+    <div class="flex items-center gap-3 py-3 border-b bg-muted/30 -mx-6 px-6 mb-4">
+      <Button @click="exportAttendeesExcel" :disabled="!attendeesList.length" variant="outline" size="sm" class="text-emerald-600 border-emerald-200 hover:bg-emerald-50">
+        <FileSpreadsheet class="w-4 h-4 mr-1" /> Excel
+      </Button>
+      <Button @click="exportAttendeesPDF" :disabled="!attendeesList.length" variant="outline" size="sm" class="text-destructive border-red-200 hover:bg-red-50">
+        <FileText class="w-4 h-4 mr-1" /> PDF
+      </Button>
+      <span class="ml-auto text-sm font-medium text-muted-foreground">{{ attendeesList.length }} asistente{{ attendeesList.length !== 1 ? 's' : '' }}</span>
     </div>
-  </div>
 
+    <div class="overflow-y-auto max-h-[50vh] -mx-6 px-6">
+      <div v-if="modalLoading" class="flex items-center justify-center py-16 text-muted-foreground">Cargando...</div>
+      <table v-else class="min-w-full divide-y divide-border">
+        <thead class="bg-muted/50 sticky top-0">
+          <tr>
+            <th class="px-5 py-3 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">#</th>
+            <th class="px-5 py-3 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Fecha</th>
+            <th class="px-5 py-3 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Hora</th>
+            <th class="px-5 py-3 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Nombre</th>
+            <th class="px-5 py-3 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Cédula</th>
+            <th class="px-5 py-3 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider">Sector</th>
+            <th class="px-5 py-3 text-center text-xs font-bold text-muted-foreground uppercase tracking-wider">Visitas</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-border">
+          <tr v-for="(a, i) in attendeesList" :key="i" class="hover:bg-primary/5 transition-colors">
+            <td class="px-5 py-3 text-sm text-muted-foreground">{{ i + 1 }}</td>
+            <td class="px-5 py-3 text-sm font-bold text-foreground">{{ a.ultima_asistencia }}</td>
+            <td class="px-5 py-3 text-sm font-bold text-primary">{{ a.ultima_hora || '—' }}</td>
+            <td class="px-5 py-3 text-sm text-foreground">{{ a.nombre }}</td>
+            <td class="px-5 py-3 text-sm text-muted-foreground">{{ a.cedula }}</td>
+            <td class="px-5 py-3 text-sm text-muted-foreground">{{ a.sector }}</td>
+            <td class="px-5 py-3 text-sm text-center">
+              <Badge class="text-xs">{{ a.total_visitas }}</Badge>
+            </td>
+          </tr>
+          <tr v-if="!modalLoading && attendeesList.length === 0">
+            <td colspan="7" class="px-5 py-10 text-center text-muted-foreground text-lg">No hay asistentes registrados en este período.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </Dialog>
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import apiClient from '../plugins/axios'
 import * as XLSX from 'xlsx'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import { Star, BarChart3, CalendarRange, ArrowLeft, FileText, FileSpreadsheet, Search as SearchIcon, Plus, AlertTriangle, CheckCircle2 } from 'lucide-vue-next'
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Dialog, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 
 const loading = ref(false)
 const hasSearched = ref(false)
 
-// --- Attendees Modal ---
 const showAttendeesModal = ref(false)
 const modalLoading = ref(false)
 const modalRecord = ref(null)
 const attendeesList = ref([])
+
+const quickFilters = [
+  { key: 'hoy', label: 'Hoy' },
+  { key: 'ayer', label: 'Ayer' },
+  { key: 'semana', label: 'Semana' },
+  { key: 'semana_pasada', label: 'Semana<br>pasada' },
+  { key: 'mes', label: 'Mes' },
+  { key: 'mes_pasado', label: 'Mes<br>pasado' },
+]
 
 const openAttendeesModal = async (record) => {
     modalRecord.value = record
@@ -345,22 +326,13 @@ const openAttendeesModal = async (record) => {
         if (filters.value.end_date) params.append('end_date', filters.value.end_date)
         const res = await apiClient.get(`reports/event-attendees/?${params.toString()}`)
         attendeesList.value = res.data
-    } catch (e) {
-        console.error('Error fetching attendees', e)
-    } finally {
-        modalLoading.value = false
-    }
+    } catch (e) { console.error('Error fetching attendees', e) } finally { modalLoading.value = false }
 }
 
 const exportAttendeesExcel = () => {
     const ws = XLSX.utils.json_to_sheet(attendeesList.value.map((a, i) => ({
-        '#': i + 1,
-        'Fecha': a.ultima_asistencia,
-        'Hora': a.ultima_hora || '',
-        'Nombre': a.nombre,
-        'Cédula': a.cedula,
-        'Sector': a.sector,
-        'Total Visitas': a.total_visitas,
+        '#': i + 1, 'Fecha': a.ultima_asistencia, 'Hora': a.ultima_hora || '', 'Nombre': a.nombre,
+        'Cédula': a.cedula, 'Sector': a.sector, 'Total Visitas': a.total_visitas,
     })))
     const wb = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(wb, ws, 'Asistentes')
@@ -371,217 +343,131 @@ const exportAttendeesPDF = () => {
     const doc = new jsPDF()
     const title = `Asistentes: ${modalRecord.value?.activity_name} - ${modalRecord.value?.event_name}`
     doc.text(title, 14, 15)
-    doc.setFontSize(9)
-    doc.setTextColor(120)
+    doc.setFontSize(9); doc.setTextColor(120)
     doc.text(`Período: ${filters.value.start_date} – ${filters.value.end_date}`, 14, 22)
     autoTable(doc, {
         head: [['#', 'Fecha', 'Hora', 'Nombre', 'Cédula', 'Sector', 'Visitas']],
         body: attendeesList.value.map((a, i) => [i + 1, a.ultima_asistencia, a.ultima_hora || '', a.nombre, a.cedula, a.sector, a.total_visitas]),
-        startY: 27,
-        theme: 'grid',
-        headStyles: { fillColor: [234, 88, 12] }
+        startY: 27, theme: 'grid', headStyles: { fillColor: [234, 88, 12] }
     })
     doc.save(`Asistentes_${modalRecord.value?.activity_name}_${getLocalISODate()}.pdf`)
 }
-// --- END Modal ---
 
-const selectedReport = ref(null) // 'attendance', 'activities', or 'events'
+const selectedReport = ref(null)
 const attendanceRecords = ref([])
 const activityRecords = ref([])
 const eventRecords = ref([])
+const riskRecords = ref([])
 
-const filters = ref({
-    start_date: '',
-    end_date: '',
-    start_time: '',
-    end_time: ''
-})
+const filters = ref({ start_date: '', end_date: '', start_time: '', end_time: '' })
 
 const currentRecords = computed(() => {
     if (selectedReport.value === 'attendance') return attendanceRecords.value
     if (selectedReport.value === 'activities') return activityRecords.value
-    return eventRecords.value
+    if (selectedReport.value === 'events') return eventRecords.value
+    if (selectedReport.value === 'risk') return riskRecords.value
+    return []
 })
 
-// Reset results when switching report type, require a new search
 watch(selectedReport, () => {
+    if (selectedReport.value === 'risk') return; // Risk doesn't need date manual search clearance
     hasSearched.value = false
-    attendanceRecords.value = []
-    activityRecords.value = []
-    eventRecords.value = []
-    filters.value.start_time = ''
-    filters.value.end_time = ''
+    attendanceRecords.value = []; activityRecords.value = []; eventRecords.value = []; riskRecords.value = []
+    filters.value.start_time = ''; filters.value.end_time = ''
 })
+
+const fetchRiskReport = async () => {
+    loading.value = true; hasSearched.value = true;
+    try {
+        const res = await apiClient.get(`reports/retention-risk/`)
+        riskRecords.value = res.data
+    } catch (e) {
+        console.error("Error fetching risk report", e)
+    } finally {
+        loading.value = false
+    }
+}
 
 const fetchReport = async () => {
     if (!filters.value.start_date && !filters.value.end_date) return
-    loading.value = true
-    hasSearched.value = true
+    loading.value = true; hasSearched.value = true
     try {
         const params = new URLSearchParams()
         if (filters.value.start_date) params.append('start_date', filters.value.start_date)
         if (filters.value.end_date) params.append('end_date', filters.value.end_date)
         if (filters.value.start_time) params.append('start_time', filters.value.start_time)
         if (filters.value.end_time) params.append('end_time', filters.value.end_time)
-        
-        if (selectedReport.value === 'attendance') {
-            const res = await apiClient.get(`reports/attendance/?${params.toString()}`)
-            attendanceRecords.value = res.data
-        } else if (selectedReport.value === 'activities') {
-            const res = await apiClient.get(`reports/activity-attendance/?${params.toString()}`)
-            activityRecords.value = res.data
-        } else {
-            const res = await apiClient.get(`reports/event-report/?${params.toString()}`)
-            eventRecords.value = res.data
-        }
-    } catch (e) {
-        console.error("Error fetching report", e)
-    } finally {
-        loading.value = false
-    }
+        if (selectedReport.value === 'attendance') { attendanceRecords.value = (await apiClient.get(`reports/attendance/?${params.toString()}`)).data }
+        else if (selectedReport.value === 'activities') { activityRecords.value = (await apiClient.get(`reports/activity-attendance/?${params.toString()}`)).data }
+        else { eventRecords.value = (await apiClient.get(`reports/event-report/?${params.toString()}`)).data }
+    } catch (e) { console.error("Error fetching report", e) } finally { loading.value = false }
 }
 
 const getLocalISODate = (date = new Date()) => {
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, '0');
-    const d = String(date.getDate()).padStart(2, '0');
+    const y = date.getFullYear(); const m = String(date.getMonth() + 1).padStart(2, '0'); const d = String(date.getDate()).padStart(2, '0');
     return `${y}-${m}-${d}`;
-};
+}
 
 const setQuickFilter = (type) => {
-    const today = new Date();
-    
-    let start, end;
-    
+    const today = new Date(); let start, end;
     switch(type) {
-        case 'hoy':
-            start = end = today;
-            break;
-        case 'ayer':
-            const yesterday = new Date(today);
-            yesterday.setDate(today.getDate() - 1);
-            start = end = yesterday;
-            break;
-        case 'semana': {
-            // Monday = start of week (adjust: getDay() 0=Sun, so Mon = (getDay()+6)%7 days ago)
-            const dayOfWeek = (today.getDay() + 6) % 7; // 0=Mon, 6=Sun
-            start = new Date(today);
-            start.setDate(today.getDate() - dayOfWeek);
-            end = today;
-            break;
-        }
-        case 'semana_pasada': {
-            const dayOfWeek2 = (today.getDay() + 6) % 7;
-            end = new Date(today);
-            end.setDate(today.getDate() - dayOfWeek2 - 1); // Last Sunday
-            start = new Date(end);
-            start.setDate(end.getDate() - 6); // Last Monday
-            break;
-        }
-        case 'mes':
-            start = new Date(today.getFullYear(), today.getMonth(), 1);
-            end = today;
-            break;
-        case 'mes_pasado':
-            start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-            end = new Date(today.getFullYear(), today.getMonth(), 0);
-            break;
+        case 'hoy': start = end = today; break;
+        case 'ayer': { const y = new Date(today); y.setDate(today.getDate() - 1); start = end = y; break; }
+        case 'semana': { const d = (today.getDay() + 6) % 7; start = new Date(today); start.setDate(today.getDate() - d); end = today; break; }
+        case 'semana_pasada': { const d2 = (today.getDay() + 6) % 7; end = new Date(today); end.setDate(today.getDate() - d2 - 1); start = new Date(end); start.setDate(end.getDate() - 6); break; }
+        case 'mes': start = new Date(today.getFullYear(), today.getMonth(), 1); end = today; break;
+        case 'mes_pasado': start = new Date(today.getFullYear(), today.getMonth() - 1, 1); end = new Date(today.getFullYear(), today.getMonth(), 0); break;
     }
-    
-    filters.value.start_date = getLocalISODate(start);
-    filters.value.end_date = getLocalISODate(end);
+    filters.value.start_date = getLocalISODate(start); filters.value.end_date = getLocalISODate(end);
     fetchReport();
 }
 
 const exportToExcel = () => {
     let ws;
     if (selectedReport.value === 'attendance') {
-        ws = XLSX.utils.json_to_sheet(attendanceRecords.value.map(r => ({
-            'Fecha': r.date,
-            'Hora': r.time,
-            'Usuario': r.beneficiary_name,
-            'Cédula': r.beneficiary_ci,
-            'Actividad': r.activity_name,
-            'Evento': r.event_name
-        })))
-    } else {
-        ws = XLSX.utils.json_to_sheet(activityRecords.value.map(r => ({
-            'Actividad': r.activity_name,
-            'Evento': r.event_name,
-            'Nº de Asistentes Únicos': r.attendees
-        })))
+        ws = XLSX.utils.json_to_sheet(attendanceRecords.value.map(r => ({ 'Fecha': r.date, 'Hora': r.time, 'Usuario': r.beneficiary_name, 'Cédula': r.beneficiary_ci, 'Actividad': r.activity_name, 'Evento': r.event_name })))
+    } else if (selectedReport.value === 'activities') {
+        ws = XLSX.utils.json_to_sheet(activityRecords.value.map(r => ({ 'Actividad': r.activity_name, 'Evento': r.event_name, 'Nº de Asistentes Únicos': r.attendees })))
+    } else if (selectedReport.value === 'events') {
+        ws = XLSX.utils.json_to_sheet(eventRecords.value.map(r => ({ 'Evento': r.event_name, 'Actividad': r.activity_name, 'Fecha Evento': r.event_date, 'Asistentes Únicos': r.attendees })))
+    } else if (selectedReport.value === 'risk') {
+        ws = XLSX.utils.json_to_sheet(riskRecords.value.map(r => ({ 'Usuario': r.name, 'Cédula': r.ci, 'Teléfono': r.phone, 'Sector': r.sector, 'Última Asistencia': r.last_attendance, 'Días Ausente': r.days_since })))
     }
-    
-    const wb = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(wb, ws, "Reporte")
-    
-    const filename = selectedReport.value === 'attendance' ? 'Reporte_Asistencia_Diaria_' : 'Reporte_Actividades_'
+    const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Reporte")
+    let filename = 'Reporte_';
+    if (selectedReport.value === 'attendance') filename += 'Asistencia_Diaria_';
+    else if (selectedReport.value === 'activities') filename += 'Actividades_Top_';
+    else if (selectedReport.value === 'risk') filename += 'Riesgo_Abandono_';
+    else filename += 'Eventos_';
     XLSX.writeFile(wb, `${filename}${getLocalISODate()}.xlsx`)
 }
 
 const exportToPDF = () => {
     const doc = new jsPDF()
-    
-    let title = "Reporte - Centro Juvenil Las Mañanitas"
-    let head = []
-    let bodyData = []
-    
+    let title = "Reporte - Centro Juvenil Las Mañanitas", head = [], bodyData = [], filename = 'Reporte_';
     if (selectedReport.value === 'attendance') {
         title = "Reporte de Asistencia Diaria"
         head = [['Fecha', 'Hora', 'Usuario', 'Cédula', 'Actividad', 'Evento']]
-        bodyData = attendanceRecords.value.map(r => [
-            r.date, r.time, r.beneficiary_name, r.beneficiary_ci, r.activity_name, r.event_name
-        ])
-    } else {
+        bodyData = attendanceRecords.value.map(r => [r.date, r.time, r.beneficiary_name, r.beneficiary_ci, r.activity_name, r.event_name])
+        filename += 'Asistencia_Diaria_'
+    } else if (selectedReport.value === 'activities') {
         title = "Reporte de Actividades más Visitadas"
         head = [['Actividad', 'Evento / Detalles', 'Asistentes Únicos']]
-        bodyData = activityRecords.value.map(r => [
-            r.activity_name, r.event_name, r.attendees
-        ])
+        bodyData = activityRecords.value.map(r => [r.activity_name, r.event_name, r.attendees])
+        filename += 'Actividades_Top_'
+    } else if (selectedReport.value === 'events') {
+        title = "Reporte por Eventos"
+        head = [['Evento', 'Actividad', 'Fecha', 'Asistentes']]
+        bodyData = eventRecords.value.map(r => [r.event_name, r.activity_name, r.event_date, r.attendees])
+        filename += 'Eventos_'
+    } else if (selectedReport.value === 'risk') {
+        title = "Reporte de Riesgo de Abandono (Churn Risk)"
+        head = [['Nombre', 'Cédula', 'Sector', 'Última Asistencia', 'Días sin asistir']]
+        bodyData = riskRecords.value.map(r => [r.name, r.ci, r.sector, r.last_attendance, r.days_since])
+        filename += 'Riesgo_Abandono_'
     }
-    
     doc.text(title, 14, 15)
-    
-    autoTable(doc, {
-        head: head,
-        body: bodyData,
-        startY: 25,
-        theme: 'grid',
-        headStyles: { fillColor: [234, 88, 12] } // Orange-600
-    })
-    
-    const filename = selectedReport.value === 'attendance' ? 'Asistencia_Diaria_' : 'Actividades_Top_'
+    autoTable(doc, { head, body: bodyData, startY: 25, theme: 'grid', headStyles: { fillColor: [234, 88, 12] } })
     doc.save(`${filename}${getLocalISODate()}.pdf`)
 }
-
-onMounted(() => {
-    // Don't auto-load: require user to apply a filter first
-})
-
 </script>
-
-<style scoped>
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.fade-slide-enter-from,
-.fade-slide-leave-to {
-  opacity: 0;
-  transform: translateY(15px);
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.animate-fade-in-up {
-  animation: fadeInUp 0.4s ease-out forwards;
-}
-</style>

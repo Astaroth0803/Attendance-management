@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import AppLayout from '../components/AppLayout.vue'
+import SuperAdminLayout from '../layouts/SuperAdminLayout.vue'
 
 const routes = [
     {
@@ -16,6 +17,18 @@ const routes = [
         path: '/attendance',
         name: 'Attendance',
         component: () => import('../views/AttendanceFormView.vue')
+    },
+    {
+        path: '/super-admin',
+        component: SuperAdminLayout,
+        meta: { requiresAuth: true },
+        children: [
+            {
+                path: '',
+                name: 'SuperAdminDashboard',
+                component: () => import('../views/superadmin/SuperAdminDashboard.vue')
+            }
+        ]
     },
     // Authenticated routes — rendered inside AppLayout (sidebar)
     {
@@ -61,7 +74,7 @@ const routes = [
             {
                 path: 'excursions',
                 name: 'Excursions',
-                component: () => import('../views/ExcurcionsView.vue')
+                component: () => import('../views/ExcursionsView.vue')
             }
         ]
     }

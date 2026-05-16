@@ -4,6 +4,7 @@ Define la estructura de datos para los perfiles y usuarios del sistema.
 """
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from organizations.models import Organization
 
 class User(AbstractUser):
     class Role(models.TextChoices):
@@ -14,6 +15,12 @@ class User(AbstractUser):
         max_length=20,
         choices=Role.choices,
         default=Role.PROFESSOR
+    )
+    
+    organization = models.ForeignKey(
+        Organization, 
+        on_delete=models.CASCADE, 
+        related_name="users"
     )
 
     def __str__(self):
