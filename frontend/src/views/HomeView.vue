@@ -1,18 +1,19 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-400 via-orange-500 to-red-500 font-sans text-white p-4 overflow-hidden relative">
+  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-400 via-primary to-red-500 font-sans text-white p-4 overflow-hidden relative">
     
-    <!-- Efectos decorativos de fondo (círculos difuminados) -->
+    <!-- Decorative blobs -->
     <div class="absolute top-10 left-10 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
     <div class="absolute top-10 right-10 w-72 h-72 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob" style="animation-delay: 2s;"></div>
     <div class="absolute -bottom-20 left-40 w-72 h-72 bg-orange-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob" style="animation-delay: 4s;"></div>
 
-    <!-- Tarjeta central con efecto Glassmorphism (Vidrio esmerilado) -->
-    <div class="relative max-w-3xl w-full flex flex-col items-center justify-center bg-white/10 backdrop-blur-lg rounded-3xl p-8 md:p-12 shadow-2xl border border-white/20 z-10 text-center">
+    <!-- Central glassmorphism card -->
+    <div class="relative max-w-3xl w-full flex flex-col items-center justify-center bg-white/10 backdrop-blur-lg rounded-3xl p-8 md:p-12 shadow-2xl border border-white/20 z-10 text-center"
+         v-motion
+         :initial="{ opacity: 0, scale: 0.95, y: 30 }"
+         :enter="{ opacity: 1, scale: 1, y: 0, transition: { duration: 700, type: 'spring', stiffness: 100 } }">
       
-      <!-- Textos y Botones -->
       <div class="space-y-8 w-full flex flex-col items-center">
         
-        <!-- Encabezados con jerarquía -->
         <div class="space-y-3">
           <p class="text-orange-100 font-semibold tracking-widest uppercase text-sm md:text-base">
              Bienvenidos al
@@ -30,22 +31,16 @@
           Tu espacio interactivo para el aprendizaje, la lectura y el desarrollo personal. Selecciona una opción para continuar.
         </p>
 
-        <!-- Botones de Acción Interactivos -->
+        <!-- CTA Buttons -->
         <div class="flex flex-col sm:flex-row gap-5 justify-center pt-2">
           
-          <!-- Botón Principal: Entrar -->
-          <router-link to="/login" class="group flex items-center justify-center gap-3 bg-white text-orange-600 px-8 py-4 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-white/50">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-            </svg>
+          <router-link to="/login" class="group flex items-center justify-center gap-3 bg-white text-primary px-8 py-4 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-white/50">
+            <LogIn class="h-6 w-6 group-hover:translate-x-1 transition-transform" />
             Entrar
           </router-link>
           
-          <!-- Botón Secundario: Asistencia -->
           <router-link to="/attendance" class="flex items-center justify-center gap-3 bg-white/15 hover:bg-white/25 border border-white/30 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 backdrop-blur-sm focus:outline-none focus:ring-4 focus:ring-white/30">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-            </svg>
+            <ClipboardList class="h-6 w-6" />
             Asistencia
           </router-link>
         </div>
@@ -56,8 +51,11 @@
   </div>
 </template>
 
+<script setup>
+import { LogIn, ClipboardList } from 'lucide-vue-next'
+</script>
+
 <style scoped>
-/* Animaciones suaves para el fondo decorativo */
 @keyframes blob {
   0%   { transform: translate(0px, 0px) scale(1); }
   33%  { transform: translate(30px, -50px) scale(1.1); }

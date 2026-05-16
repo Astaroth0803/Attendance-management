@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-orange-500 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+  <div class="min-h-screen bg-primary flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
     
     <div class="sm:mx-auto sm:w-full sm:max-w-md z-10">
       <h2 class="mt-6 text-center text-4xl font-extrabold text-white tracking-tight drop-shadow-md">
@@ -16,21 +16,14 @@
                   {'-translate-y-1': isUsernameFocused || isPasswordFocused},
                   {'robot-shake': isError}
                ]">
-              <!-- Ears -->
               <div class="absolute -left-3 top-8 w-2 h-6 bg-gray-300 rounded-l-md"></div>
               <div class="absolute -right-3 top-8 w-2 h-6 bg-gray-300 rounded-r-md"></div>
-              
-              <!-- Antenna base -->
               <div class="absolute -top-3 w-6 h-2 bg-gray-300 rounded-t-md"></div>
-              <!-- Antenna stick -->
               <div class="absolute -top-7 w-1.5 h-4 bg-gray-300"></div>
-              <!-- Antenna bulb -->
               <div class="absolute -top-[36px] w-4 h-4 rounded-full transition-colors duration-300"
-                   :class="isError ? 'bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.6)]' : (isSuccess ? 'bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.6)]' : (isPasswordFocused ? 'bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.6)]' : (isUsernameFocused ? 'bg-[#1e9d8e] shadow-[0_0_15px_rgba(30,157,142,0.6)]' : 'bg-gray-300')))"></div>
+                   :class="isError ? 'bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.6)]' : (isSuccess ? 'bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.6)]' : (isPasswordFocused ? 'bg-primary shadow-[0_0_15px_rgba(249,115,22,0.6)]' : (isUsernameFocused ? 'bg-[#1e9d8e] shadow-[0_0_15px_rgba(30,157,142,0.6)]' : 'bg-gray-300')))"></div>
                    
-              <!-- Visor / Face Screen -->
               <div class="w-[72px] h-[36px] bg-[#1c2b42] rounded-xl relative overflow-hidden flex items-center px-[10px] justify-between shadow-inner mt-1">
-                   <!-- Eye Left -->
                    <div class="w-3.5 h-3.5 transition-all duration-300 ease-out"
                         :class="[
                           isError ? 'bg-red-400 h-1.5 rotate-45 rounded-sm' : (isSuccess ? 'bg-green-400 h-2 w-4 rounded-b-full -translate-y-0.5' : 'rounded-full'),
@@ -38,7 +31,6 @@
                           !isError && !isSuccess && !isPasswordFocused ? 'bg-[#2ab1a6]' : '',
                           isUsernameFocused && !isPasswordFocused && !isError && !isSuccess ? 'translate-x-[6px] scale-110' : ''
                         ]"></div>
-                   <!-- Eye Right -->
                    <div class="w-3.5 h-3.5 transition-all duration-300 ease-out"
                         :class="[
                           isError ? 'bg-red-400 h-1.5 -rotate-45 rounded-sm' : (isSuccess ? 'bg-green-400 h-2 w-4 rounded-b-full -translate-y-0.5' : 'rounded-full'),
@@ -48,7 +40,6 @@
                         ]"></div>
               </div>
               
-              <!-- Mouth -->
               <div class="flex gap-1.5 mt-2.5">
                   <div class="w-1 h-2 bg-gray-200 rounded-full" :class="isSuccess || isError ? 'hidden' : ''"></div>
                   <div class="w-1 bg-gray-300 rounded-full transition-all duration-300"
@@ -70,45 +61,42 @@
           </div>
       </div>
 
-      <div class="bg-white py-10 px-6 shadow-xl sm:rounded-[2rem] sm:px-12 border border-gray-100 relative z-10 transition-shadow duration-500"
-           :class="(isUsernameFocused || isPasswordFocused) ? 'shadow-2xl shadow-orange-100/50' : ''">
+      <Card class="py-10 px-6 shadow-xl sm:rounded-[2rem] sm:px-12 relative z-10 transition-shadow duration-500 border-0"
+           :class="(isUsernameFocused || isPasswordFocused) ? 'shadow-2xl shadow-primary/20' : ''">
         <form class="space-y-6" @submit.prevent="handleLogin">
           <div>
-            <label for="username" class="block text-sm font-semibold text-gray-700">Usuario</label>
+            <Label for="username" class="text-sm font-semibold">Usuario</Label>
             <div class="mt-1.5">
-              <input id="username" v-model="username" type="text" required 
+              <Input id="username" v-model="username" type="text" required 
                      @focus="isUsernameFocused = true" @blur="isUsernameFocused = false"
                      autocomplete="username"
-                     class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 sm:text-sm font-medium transition-colors text-gray-800">
+                     class="h-12 px-4 rounded-xl" />
             </div>
           </div>
 
           <div>
-            <label for="password" class="block text-sm font-semibold text-gray-700">Contraseña</label>
+            <Label for="password" class="text-sm font-semibold">Contraseña</Label>
             <div class="mt-1.5">
               <input id="password" v-model="password" type="password" required 
                      @focus="isPasswordFocused = true" @blur="isPasswordFocused = false"
                      autocomplete="current-password"
-                     class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 sm:text-sm font-medium transition-colors text-gray-800">
+                     class="flex h-12 w-full rounded-xl border border-input bg-transparent px-4 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
             </div>
           </div>
 
-          <!-- Error banner (shown below the robot too) -->
-          <div v-if="error && !isError" class="text-sm text-red-700 bg-red-50 py-3 px-4 rounded-xl border border-red-200 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 shrink-0">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" />
-            </svg>
+          <!-- Error banner -->
+          <div v-if="error && !isError" class="text-sm text-destructive bg-destructive/10 py-3 px-4 rounded-xl border border-destructive/20 flex items-center gap-2">
+            <AlertCircle class="w-5 h-5 shrink-0" />
             {{ error }}
           </div>
 
           <div class="pt-2">
-            <button type="submit" :disabled="loading || isSuccess" 
-                    class="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-md text-sm font-bold text-white bg-[#1c2b42] hover:bg-[#2a3c58] hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1c2b42] disabled:opacity-50 transition-all uppercase tracking-wider">
+            <Button type="submit" :disabled="loading || isSuccess" class="w-full h-12 rounded-xl text-sm font-bold uppercase tracking-wider bg-[#1c2b42] hover:bg-[#2a3c58]">
               {{ isSuccess ? '¡Bienvenido! 🎉' : (loading ? 'Conectando...' : 'Iniciar Sesión') }}
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
+      </Card>
     </div>
   </div>
 </template>
@@ -132,6 +120,11 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import apiClient from '../plugins/axios'
+import { AlertCircle } from 'lucide-vue-next'
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 const router = useRouter()
 const username = ref('')
@@ -159,9 +152,17 @@ const handleLogin = async () => {
     localStorage.setItem('access_token', response.data.access)
     localStorage.setItem('refresh_token', response.data.refresh)
     
+    const payload = JSON.parse(atob(response.data.access.split('.')[1]))
+    const userRes = await apiClient.get(`users/${payload.user_id}/`)
+    const isSuperAdmin = userRes.data.is_staff
+    
     isSuccess.value = true
     setTimeout(() => {
-      router.push('/dashboard')
+      if (isSuperAdmin) {
+         router.push('/super-admin')
+      } else {
+         router.push('/dashboard')
+      }
     }, 1200)
 
   } catch (err) {
@@ -175,7 +176,6 @@ const handleLogin = async () => {
       error.value = 'Hubo un error al intentar iniciar sesión. Intenta más tarde.'
     }
 
-    // After shake animation, refocus username field
     setTimeout(() => {
       isError.value = false
     }, 1500)

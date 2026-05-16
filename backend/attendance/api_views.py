@@ -2,21 +2,44 @@ from datetime import date, timedelta
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django.db.models import Count
+from django.db.models import Count, Max
+from django.shortcuts import get_object_or_404
 from core.models import Beneficiary, Activity
 from .models import AttendanceRecord, Excursion
+from organizations.security import get_tenant_or_deny
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def dashboard_stats(request):
+    org = get_tenant_or_deny(request)
     today = date.today()
     
-    # Basic Stats
-    attendances_today = AttendanceRecord.objects.filter(date=today).count()
-    active_users = Beneficiary.objects.filter(is_active=True).count()
+    # Basic Stats — filtered by organization
+    attendances_today = AttendanceRecord.objects.filter(date=today, organization=org).count()
+    active_users = Beneficiary.objects.filter(is_active=True, organization=org).count()
     
+    # Calculate Trends (Today vs Yesterday for attendances, and overall growth for users)
+    yesterday_date = today - timedelta(days=1)
+    attendances_yesterday = AttendanceRecord.objects.filter(date=yesterday_date, organization=org).count()
+    
+    # Simple percentage difference. Safe against zero division.
+    if attendances_yesterday == 0:
+        attendances_trend = 100 if attendances_today > 0 else 0
+    else:
+        attendances_trend = round(((attendances_today - attendances_yesterday) / attendances_yesterday) * 100)
+    
+    # Basic growth trend for active users. Compare users created before this week.
+    last_week_date = today - timedelta(days=7)
+    users_last_week = Beneficiary.objects.filter(is_active=True, organization=org, created_at__lt=last_week_date).count()
+    if users_last_week == 0:
+        users_trend = 100 if active_users > 0 else 0
+    else:
+        users_trend = round(((active_users - users_last_week) / users_last_week) * 100)
+
     # Top Activity
-    top_activity = Activity.objects.annotate(attendance_count=Count('events__attendances')).order_by('-attendance_count').first()
+    top_activity = Activity.objects.filter(organization=org).annotate(
+        attendance_count=Count('events__attendances')
+    ).order_by('-attendance_count').first()
     
     from django.db.models.functions import ExtractYear, ExtractMonth
     
@@ -28,7 +51,9 @@ def dashboard_stats(request):
         y: [0]*12 for y in years
     }
     
-    qs = AttendanceRecord.objects.filter(date__year__in=years).annotate(
+    qs = AttendanceRecord.objects.filter(
+        date__year__in=years, organization=org
+    ).annotate(
         year=ExtractYear('date'),
         month=ExtractMonth('date')
     ).values('year', 'month').annotate(count=Count('id'))
@@ -41,7 +66,7 @@ def dashboard_stats(request):
     ]
 
     # Top 5 Attendees
-    top_attendees_qs = Beneficiary.objects.annotate(
+    top_attendees_qs = Beneficiary.objects.filter(organization=org).annotate(
         attendance_count=Count('attendances')
     ).filter(attendance_count__gt=0).order_by('-attendance_count')[:5]
     
@@ -56,7 +81,9 @@ def dashboard_stats(request):
 
     return Response({
         'attendances_today': attendances_today,
+        'attendances_trend': attendances_trend,
         'active_users': active_users,
+        'users_trend': users_trend,
         'top_activity_name': top_activity.name if top_activity else 'N/A',
         'chart_data': chart_series,
         'top_attendees': top_attendees
@@ -65,12 +92,13 @@ def dashboard_stats(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def attendance_report(request):
+    org = get_tenant_or_deny(request)
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
     start_time = request.GET.get('start_time')  # format HH:MM
     end_time = request.GET.get('end_time')       # format HH:MM
     
-    qs = AttendanceRecord.objects.select_related('beneficiary', 'event__activity').all()
+    qs = AttendanceRecord.objects.filter(organization=org).select_related('beneficiary', 'event__activity')
     
     if start_date:
         qs = qs.filter(date__gte=start_date)
@@ -100,10 +128,11 @@ def attendance_report(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def activity_attendance_report(request):
+    org = get_tenant_or_deny(request)
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
     
-    qs = AttendanceRecord.objects.select_related('event__activity').all()
+    qs = AttendanceRecord.objects.filter(organization=org).select_related('event__activity')
     
     if start_date:
         qs = qs.filter(date__gte=start_date)
@@ -136,10 +165,11 @@ def event_report(request):
     Returns attendance count grouped by event (with event date), for the 'Por Evento' report.
     Query params: start_date, end_date
     """
+    org = get_tenant_or_deny(request)
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
 
-    qs = AttendanceRecord.objects.select_related('event__activity').all()
+    qs = AttendanceRecord.objects.filter(organization=org).select_related('event__activity')
 
     if start_date:
         qs = qs.filter(date__gte=start_date)
@@ -168,23 +198,24 @@ def event_report(request):
     return Response(data)
 
 
-from django.shortcuts import get_object_or_404
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def beneficiary_profile_report(request, pk):
-    b = get_object_or_404(Beneficiary, pk=pk)
+    org = get_tenant_or_deny(request)
+    b = get_object_or_404(Beneficiary, pk=pk, organization=org)
     
-    total_attendance = AttendanceRecord.objects.filter(beneficiary=b).count()
+    total_attendance = AttendanceRecord.objects.filter(beneficiary=b, organization=org).count()
     
     # Breakdown by activity/event
-    activities_data = AttendanceRecord.objects.filter(beneficiary=b).values(
+    activities_data = AttendanceRecord.objects.filter(beneficiary=b, organization=org).values(
         'event__activity__name', 'event__name'
     ).annotate(
         count=Count('id')
     ).order_by('-count')
     
-    recent_attendances = AttendanceRecord.objects.filter(beneficiary=b).select_related('event__activity').order_by('-date')[:5]
+    recent_attendances = AttendanceRecord.objects.filter(
+        beneficiary=b, organization=org
+    ).select_related('event__activity').order_by('-date')[:5]
     
     recent_list = []
     for r in recent_attendances:
@@ -225,7 +256,8 @@ def beneficiary_profile_report(request, pk):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def activity_profile_report(request, pk):
-    act = get_object_or_404(Activity, pk=pk)
+    org = get_tenant_or_deny(request)
+    act = get_object_or_404(Activity, pk=pk, organization=org)
     
     events_qs = act.events.annotate(attendance_count=Count('attendances')).order_by('-id')
     events_list = []
@@ -262,12 +294,13 @@ def event_attendees_detail(request):
     Returns the list of unique attendees for a given activity+event within a date range.
     Query params: activity_name, event_name, start_date, end_date
     """
+    org = get_tenant_or_deny(request)
     activity_name = request.GET.get('activity_name', '')
     event_name = request.GET.get('event_name', '')
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
 
-    qs = AttendanceRecord.objects.select_related('beneficiary', 'event__activity').all()
+    qs = AttendanceRecord.objects.filter(organization=org).select_related('beneficiary', 'event__activity')
 
     if activity_name:
         qs = qs.filter(event__activity__name=activity_name)
@@ -309,6 +342,7 @@ def attendance_chart_data(request):
     Returns daily attendance counts for the given date range.
     Query params: start_date, end_date
     """
+    org = get_tenant_or_deny(request)
     start_date_str = request.GET.get('start_date')
     end_date_str = request.GET.get('end_date')
 
@@ -327,7 +361,7 @@ def attendance_chart_data(request):
 
     # Aggregate attendance per day
     qs = AttendanceRecord.objects.filter(
-        date__gte=start_dt, date__lte=end_dt
+        date__gte=start_dt, date__lte=end_dt, organization=org
     ).values('date').annotate(count=Count('id')).order_by('date')
 
     counts_by_date = {r['date']: r['count'] for r in qs}
@@ -346,29 +380,24 @@ def system_notifications(request):
     - Activities close to deadline
     - Excursions that are past their date but not marked as finished
     """
+    org = get_tenant_or_deny(request)
     today = date.today()
     notifications = []
     
-    # 1. Birthdays
-    # Note: Extracting month/day cross-year is tricky in simple ORM without ExtractMonth etc, 
-    # but for simplicity we'll pull all active users and filter in memory if the DB is small enough,
-    # OR use ExtractMonth/Day. Given this is SQLite/small DB, we'll do extract.
     from django.db.models.functions import ExtractMonth, ExtractDay
     upcoming_limit = today + timedelta(days=7)
     
-    # Easier approximation: just get those whose birthday is EXACTLY today or next days.
-    # To handle wrap-around years, it's safer to just check month/day combinations.
-    active_bens = Beneficiary.objects.filter(is_active=True, dob__isnull=False).annotate(
+    active_bens = Beneficiary.objects.filter(
+        is_active=True, dob__isnull=False, organization=org
+    ).annotate(
         birth_month=ExtractMonth('dob'),
         birth_day=ExtractDay('dob')
     )
     
     for b in active_bens:
-        # Reconstruct their birthday for THIS year
         try:
             bday_this_year = date(today.year, b.birth_month, b.birth_day)
         except ValueError:
-            # Leap year edge case (Feb 29 on a non-leap year)
             bday_this_year = date(today.year, 2, 28)
             
         if today <= bday_this_year <= upcoming_limit:
@@ -391,7 +420,8 @@ def system_notifications(request):
         is_active=True, 
         deadline_date__isnull=False,
         deadline_date__gte=today,
-        deadline_date__lte=upcoming_limit
+        deadline_date__lte=upcoming_limit,
+        organization=org
     )
     for act in expiring_acts:
         notifications.append({
@@ -405,7 +435,7 @@ def system_notifications(request):
         
     # 3. Expired Excursions (Not finalized)
     expired_excursions = Excursion.objects.filter(
-        fecha_evento__lt=today
+        fecha_evento__lt=today, organization=org
     ).exclude(estado='finalizado').exclude(estado='cancelado')
     
     for exc in expired_excursions:
@@ -418,7 +448,234 @@ def system_notifications(request):
             'is_urgent': True
         })
         
-    # Sort notifications by urgency and date
+        # Sort notifications by urgency and date
     notifications.sort(key=lambda x: (not x['is_urgent'], x['date']))
     
     return Response(notifications)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def leaderboard(request):
+    """
+    Devuelve los 3/5 mayores asistentes del mes en curso, con insignia calculada.
+    """
+    org = get_tenant_or_deny(request)
+    today = date.today()
+    start_of_month = date(today.year, today.month, 1)
+
+    qs = Beneficiary.objects.filter(organization=org, is_active=True).annotate(
+        monthly_attendances=Count('attendances', filter=models.Q(attendances__date__gte=start_of_month))
+    ).filter(monthly_attendances__gt=0).order_by('-monthly_attendances')[:5]
+
+    data = []
+    medals = ['oro', 'plata', 'bronce']
+    
+    for i, b in enumerate(qs):
+        badge = medals[i] if i < len(medals) else 'destacado'
+        data.append({
+            'id': b.id,
+            'name': f"{b.first_name} {b.last_name}",
+            'ci': b.ci,
+            'attendances': b.monthly_attendances,
+            'badge': badge,
+            'rank': i + 1
+        })
+        
+    return Response(data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def retention_risk_report(request):
+    """
+    Encuentra usuarios que asistían pero han dejado de venir en los últimos 15 días.
+    Criterio base: Vinieron al menos 3 veces el mes pasado, pero 0 veces en los últimos 15 días.
+    """
+    org = get_tenant_or_deny(request)
+    today = date.today()
+    
+    from dateutil.relativedelta import relativedelta
+    first_day_last_month = (today.replace(day=1) - timedelta(days=1)).replace(day=1)
+    last_day_last_month = today.replace(day=1) - timedelta(days=1)
+    
+    risk_threshold_date = today - timedelta(days=15)
+
+    # Buscar usuarios con >= 3 visitas el mes pasado
+    old_active_users = AttendanceRecord.objects.filter(
+        organization=org,
+        date__gte=first_day_last_month,
+        date__lte=last_day_last_month
+    ).values('beneficiary').annotate(
+        count=Count('id')
+    ).filter(count__gte=3)
+    
+    candidate_bids = [u['beneficiary'] for u in old_active_users]
+
+    # Averiguar cuántos de estos NO han venido en los últimos 15 días
+    # Se obtienen las visitas recientes de estos candidatos
+    recent_attendances = AttendanceRecord.objects.filter(
+        organization=org,
+        beneficiary_id__in=candidate_bids,
+        date__gte=risk_threshold_date
+    ).values_list('beneficiary_id', flat=True).distinct()
+    
+    at_risk_bids = set(candidate_bids) - set(recent_attendances)
+
+    at_risk_users = Beneficiary.objects.filter(id__in=at_risk_bids).order_by('first_name', 'last_name')
+    
+    data = []
+    for b in at_risk_users:
+        # Get exact last attendance
+        last_rec = AttendanceRecord.objects.filter(beneficiary=b).order_by('-date').first()
+        data.append({
+            'id': b.id,
+            'name': f"{b.first_name} {b.last_name}",
+            'ci': b.ci,
+            'phone': getattr(b, 'phone', 'No registrado'), # Assuming phone might not exist but placeholder
+            'sector': b.sector,
+            'last_attendance': last_rec.date.strftime('%Y-%m-%d') if last_rec else '-',
+            'days_since': (today - last_rec.date).days if last_rec else 0
+        })
+
+    # Sort descending by risk (days since last attendance)
+    data.sort(key=lambda x: x['days_since'], reverse=True)
+    return Response(data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def activity_attendance_chart(request, pk):
+    """
+    Returns daily attendance data for a specific activity over the last 30 days.
+    """
+    org = get_tenant_or_deny(request)
+    activity = get_object_or_404(Activity, pk=pk, organization=org)
+    
+    today = date.today()
+    start_date = today - timedelta(days=30)
+    
+    qs = AttendanceRecord.objects.filter(
+        organization=org,
+        event__activity=activity,
+        date__gte=start_date
+    ).values('date').annotate(total=Count('id')).order_by('date')
+    
+    date_dict = {str(start_date + timedelta(days=i)): 0 for i in range(31)}
+    for r in qs:
+        date_dict[str(r['date'])] = r['total']
+        
+    dates = list(date_dict.keys())
+    totals = list(date_dict.values())
+    
+    return Response({
+        'categories': dates,
+        'series': [{'name': 'Asistencias', 'data': totals}]
+    })
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def activity_unique_attendees(request, pk):
+    """
+    Returns unique attendees for a specific activity, counting how many times they attended.
+    """
+    org = get_tenant_or_deny(request)
+    activity = get_object_or_404(Activity, pk=pk, organization=org)
+    
+    attendees_qs = AttendanceRecord.objects.filter(
+        organization=org,
+        event__activity=activity
+    ).values(
+        'beneficiary__id', 
+        'beneficiary__first_name', 
+        'beneficiary__last_name', 
+        'beneficiary__ci'
+    ).annotate(
+        total_visits=Count('id'),
+        last_visit=Max('date')
+    ).order_by('-total_visits')
+    
+    data = []
+    for a in attendees_qs:
+        data.append({
+            'id': a['beneficiary__id'],
+            'name': f"{a['beneficiary__first_name']} {a['beneficiary__last_name']}",
+            'ci': a['beneficiary__ci'],
+            'total_visits': a['total_visits'],
+            'last_visit': str(a['last_visit'])
+        })
+        
+    return Response(data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def beneficiary_attendances(request, pk):
+    org = get_tenant_or_deny(request)
+    beneficiary = get_object_or_404(Beneficiary, pk=pk, organization=org)
+    
+    # Get all historical attendances for this beneficiary
+    attendances = AttendanceRecord.objects.filter(
+        organization=org,
+        beneficiary=beneficiary
+    ).select_related('event__activity').order_by('-date')
+    
+    data = []
+    for a in attendances:
+        data.append({
+            'id': a.id,
+            'date': str(a.date),
+            'activity_name': a.event.activity.name if a.event and a.event.activity else 'General',
+            'event_name': a.event.name if a.event else 'Sin Evento',
+        })
+        
+    return Response(data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def beneficiary_chart(request, pk):
+    """
+    Returns the attendance count grouped by month for the last 6 months 
+    for a specific beneficiary.
+    """
+    org = get_tenant_or_deny(request)
+    beneficiary = get_object_or_404(Beneficiary, pk=pk, organization=org)
+    
+    today = date.today()
+    six_months_ago = today - timedelta(days=180)
+    
+    # Group by year-month
+    attendances_qs = AttendanceRecord.objects.filter(
+        organization=org,
+        beneficiary=beneficiary,
+        date__gte=six_months_ago
+    ).values('date__year', 'date__month').annotate(total=Count('id')).order_by('date__year', 'date__month')
+    
+    # Fill missing months safely without complex DB functions
+    months_map = {1: 'Ene', 2: 'Feb', 3: 'Mar', 4: 'Abr', 5: 'May', 6: 'Jun', 
+                 7: 'Jul', 8: 'Ago', 9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dic'}
+    
+    results = {}
+    for i in range(5, -1, -1):
+        target_date = today - timedelta(days=i*30)
+        key = f"{target_date.year}-{target_date.month}"
+        results[key] = {
+            'label': f"{months_map[target_date.month]} {target_date.year}",
+            'total': 0
+        }
+        
+    for a in attendances_qs:
+        key = f"{a['date__year']}-{a['date__month']}"
+        if key in results:
+            results[key]['total'] = a['total']
+            
+    categories = []
+    series_data = []
+    
+    # Extract in order
+    for v in results.values():
+        categories.append(v['label'])
+        series_data.append(v['total'])
+        
+    # Remove early zeros if they never attended before the middle
+    return Response({
+        'categories': categories,
+        'series': [{'name': 'Asistencias', 'data': series_data}]
+    })
